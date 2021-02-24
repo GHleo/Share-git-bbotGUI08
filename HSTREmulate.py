@@ -34,14 +34,19 @@ def HSTREm_algorithm(scrol01,scrol02, scrol03, scrol04, scrol05, scrolMain, pb00
     scrolMain.delete(0.1, tk.END)
 #FFFF First variable Initialisation then will be auto init
     rcmUpMrg, rcmDnLng, Last10LngAvr, Last10MrgAvr, CalcProfit = ae.getInfo(scrolMain,scrolShTr, scrolMACD)
-    cnf.bigUpPercent = rcmUpMrg
-    cnf.bigDnPercent = rcmDnLng  # for Long
-    cnf.Up3LastSet = round(rcmUpMrg * 1.5,2)  # add 50% from rcmUpMrg. For Short
-    cnf.Dn3LastSet = round(rcmDnLng * 1.5,2)  # add 50% from rcmDnLng. For Long
+    if cnf.BigUpDn_CheckB == 1: #if selected Auto?
+        cnf.bigUpPercent = rcmUpMrg
+        cnf.bigDnPercent = rcmDnLng  # for Long
+        cnf.Up3LastSet = round(rcmUpMrg * 1.5, 2)  # add 50% from rcmUpMrg. For Short
+        cnf.Dn3LastSet = round(rcmDnLng * 1.5, 2)  # add 50% from rcmDnLng. For Long
+    # cnf.bigUpPercent = rcmUpMrg
+    # cnf.bigDnPercent = rcmDnLng  # for Long
+    # cnf.Up3LastSet = round(rcmUpMrg * 1.5,2)  # add 50% from rcmUpMrg. For Short
+    # cnf.Dn3LastSet = round(rcmDnLng * 1.5,2)  # add 50% from rcmDnLng. For Long
     cnf.nLMTautoDnLng_GL = Last10LngAvr #for Long
     cnf.nLMTautoUpMrg_GL = Last10MrgAvr #for Margin
     cnf.profitEm = CalcProfit
-    print('HSTREm_algorithm() first Initialisation:')
+    print('cnf.bigUpPercent ' + str(cnf.bigUpPercent))
     print('Recommended For Margin:  cnf.bigUpPercent/cnf.Up3LastSet ' + str(rcmUpMrg) + '/' + str(cnf.Up3LastSet))
     print('Recommended For   Long:  cnf.bigDnPercent/cnf.Dn3LastSet ' + str(rcmDnLng) + '/' + str(cnf.Dn3LastSet))
     print('Recommended For   Profit:  nf.profitEm ' + str(CalcProfit))
@@ -135,10 +140,15 @@ def HSTREm_algorithm(scrol01,scrol02, scrol03, scrol04, scrol05, scrolMain, pb00
                 CalcProfit = ae.listHL_MinPercents(high, low, dt_HM, lBodyUp, _lstBodyDnLng, price) # get recomended profit
 
                 startTime = int(time.time())
-                cnf.bigUpPercent = rcmUpMrg
-                cnf.bigDnPercent = rcmDnLng
-                cnf.Up3LastSet = round(rcmUpMrg * 1.5,4)  # add 50% from rcmUpMrg. For Short
-                cnf.Dn3LastSet = round(rcmDnLng * 1.5,4) # add 50% from rcmDnLng. For Long
+                if cnf.BigUpDn_CheckB == 1:  # if selected Auto?
+                    cnf.bigUpPercent = rcmUpMrg
+                    cnf.bigDnPercent = rcmDnLng  # for Long
+                    cnf.Up3LastSet = round(rcmUpMrg * 1.5, 4)  # add 50% from rcmUpMrg. For Short
+                    cnf.Dn3LastSet = round(rcmDnLng * 1.5, 4)  # add 50% from rcmDnLng. For Long
+                #cnf.bigUpPercent = rcmUpMrg
+                #cnf.bigDnPercent = rcmDnLng
+                #cnf.Up3LastSet = round(rcmUpMrg * 1.5,4)  # add 50% from rcmUpMrg. For Short
+                #cnf.Dn3LastSet = round(rcmDnLng * 1.5,4) # add 50% from rcmDnLng. For Long
 
                 cnf.nLMTautoUpMrg_GL = round(sum(bodyCndl10Mrg)/len(bodyCndl10Mrg),2) # for Margin
                 cnf.nLMTautoDnLng_GL = round(sum(bodyCndl10Lng)/len(bodyCndl10Lng),2) # for Long

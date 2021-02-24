@@ -18,11 +18,10 @@ import HSTREmulate
 
 # ===================================================================
 class OOP:
-
     gbalance = {balance['asset']: float(balance['free']) for balance in cnf.bot.account()['balances'] if balance['asset'] == 'USDT'}
     mbalanceUSDT = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'USDT'}
     mbalancesBTC = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'BTC'}
-    mbalancesTRX = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'TRX'}
+    #mbalancesTRX = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'TRX'}
     curr_rate = round(float(cnf.bot.tickerPrice(symbol='BTCUSDT')['price']),2)
 
     def __init__(self):  # Initializer method!
@@ -54,6 +53,7 @@ class OOP:
 
         #t1Frame1St = ttk.Style()
         #t1Frame1St.configure('Red.TLabelframe.Label', background='blue')
+
         self.t1Frame1 = tk.LabelFrame(self.tab0, bg="white", text=' ------------ General settings ---------------------------------  ')# style = "Font.TLabelframe")
         self.t1Frame1.grid(column=0, row=0, padx=4, pady=4, sticky='N')
         self.t1Frame11 = tk.LabelFrame(self.tab0, bg="white", text=' ----------- Short Trend and MACD Algorithms ---------------------------  ')
@@ -120,10 +120,10 @@ class OOP:
         self.entry14_mess.set(str(round(self.curr_rate * self.mbalancesBTC['BTC'],3)) + ' in USDT')
         self.entry14.grid(column=1,row=5)
 
-        self.entry15_mess = tk.StringVar()
-        self.entry15 = tk.Entry(self.t1Frame1, textvariable=self.entry15_mess, width=12)
-        self.entry15_mess.set(str(round(self.curr_rate * self.mbalancesTRX['TRX'],3)) + ' in TRX')
-        self.entry15.grid(column=1,row=19)
+        # self.entry15_mess = tk.StringVar()
+        # self.entry15 = tk.Entry(self.t1Frame1, textvariable=self.entry15_mess, width=12)
+        # self.entry15_mess.set(str(round(self.curr_rate * self.mbalancesTRX['TRX'],3)) + ' in TRX')
+        # self.entry15.grid(column=1,row=19)
 
         labelSep1 = ttk.Label(self.t1Frame1, text="+++++++++++++++++++++++++++++++++")
         labelSep1.grid(column=0, row=6)
@@ -182,9 +182,15 @@ class OOP:
         self.cmbTfMrg = ttk.Combobox(self.t1Frame1, values=cnf.mKline, width=4)
         self.cmbTfMrg.current(1)
         self.cmbTfMrg.grid(column=1, row=14)
+#####################################################################################################3
+        #label10 = ttk.Label(self.t1Frame1, text="Delta for Limits($)")
+        #label10.grid(column=0, row=15)
 
-        label10 = ttk.Label(self.t1Frame1, text="Delta for Limits($)")
-        label10.grid(column=0, row=15)
+        self.varCB1 = tk.IntVar()
+        self.cb = tk.Checkbutton(self.t1Frame1, text=" - Auto? Delta for Limits($) ", variable=self.varCB1, onvalue=1, command=self.print_value)
+        self.cb.select()
+        self.cb.grid(column=0, row=15)
+
         self.cmb19 = ttk.Combobox(self.t1Frame1, values=cnf.limitUSD, width=4)
         self.cmb19.current(4)
         self.cmb19.grid(column=0, row=15, sticky='E')
@@ -249,8 +255,13 @@ class OOP:
         # self.cmbSPDn.current(3)
         # self.cmbSPDn.grid(column=1, row=8, sticky='E')
 
-        labelLastBig = ttk.Label(self.t1Frame11, text="Last candle Big(in %): ")
-        labelLastBig.grid(column=0, row=9, sticky='W')
+
+        self.varCB2 = tk.IntVar()
+        self.cb2 = tk.Checkbutton(self.t1Frame11, text=" - Auto? Last candle Big(in %): ", variable=self.varCB2, onvalue=1, command=self.print_value)
+        self.cb2.select()
+        self.cb2.grid(column=0, row=9, sticky='W')
+        # labelLastBig = ttk.Label(self.t1Frame11, text="Last candle Big(in %): ")
+        # labelLastBig.grid(column=0, row=9, sticky='W')
         self.cmbBigDn = ttk.Combobox(self.t1Frame11, values=cnf.listPrntBigUpDn, width=6)
         self.cmbBigDn.current(0)
         self.cmbBigDn.grid(column=0, row=9, sticky='E')
@@ -258,8 +269,12 @@ class OOP:
         self.cmbBigUp.current(0)
         self.cmbBigUp.grid(column=1, row=9)
 
-        label3LastBig = ttk.Label(self.t1Frame11, text="Last N candles Big(in %): ")
-        label3LastBig.grid(column=0, row=10, sticky='W')
+        self.varCB3 = tk.IntVar()
+        self.cb3 = tk.Checkbutton(self.t1Frame11, text=" - Auto? Last N candles Big(in %): ", variable=self.varCB3, onvalue=1, command=self.print_value)
+        self.cb3.select()
+        self.cb3.grid(column=0, row=10, sticky='W')
+        # label3LastBig = ttk.Label(self.t1Frame11, text="Last N candles Big(in %): ")
+        # label3LastBig.grid(column=0, row=10, sticky='W')
         self.cmb3BigDn = ttk.Combobox(self.t1Frame11, values=cnf.listPrnt3LstBigUpDn, width=6)
         self.cmb3BigDn.current(1)
         self.cmb3BigDn.grid(column=0, row=10, sticky='E')
@@ -439,7 +454,9 @@ class OOP:
         #print('_pairs: ',_pairs)
         cnf.pairsGL = _pairs
         cnf.nLMT_GL = float(self.cmb19.get())#limit cost for Buy
+        cnf.nLMT_GL_CheckB = self.varCB1.get() # get value of CheckBox 1-select, 0-deselect
         cnf.nLMT_MrgGL = float(self.cmbDMrg.get()) #limit cost for Sell
+        cnf.BigUpDn_CheckB = self.varCB2.get() # get value of CheckBox 1-select, 0-deselect
         cnf.KlineGL = self.cmb06.get() #time frame for long
         cnf.BUYlng_LIFE_TIME_MIN = int(str(cnf.KlineGL)[0]) #life time for buing (correct only until 5min)
         cnf.KlineMrgGL = self.cmbTfMrg.get() #time frame for Margin
@@ -470,10 +487,10 @@ class OOP:
         cnf.timeFrame = str(self.cmbTmFrame.get())
         #cnf.setExtremPercent = float(self.cmbSP.get())
         #cnf.setExtremPercentDn = float(self.cmbSPDn.get())
-        # cnf.bigUpPercent = float(self.cmbBigUp.get()) # for Margin
-        # cnf.bigDnPercent = float(self.cmbBigDn.get()) # for Long
-        # cnf.Up3LastSet = float(self.cmb3BigUP.get()) # for Margin
-        # cnf.Dn3LastSet = float(self.cmb3BigDn.get()) # for Long
+        cnf.bigUpPercent = float(self.cmbBigUp.get()) # for Margin
+        cnf.bigDnPercent = float(self.cmbBigDn.get()) # for Long
+        cnf.Up3LastSet = float(self.cmb3BigUP.get()) # for Margin
+        cnf.Dn3LastSet = float(self.cmb3BigDn.get()) # for Long
 
 
     def _quit(self):
@@ -664,4 +681,8 @@ class OOP:
             #print('if select Trade Real', cnf.driveMode )
 
 
+
+
+    def print_value(self):
+        print(cnf.nLMT_GL_CheckB)
 #OOP().win.mainloop()

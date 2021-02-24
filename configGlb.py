@@ -93,6 +93,8 @@ isSTrend_GL = True #Flag for fast Trend algorithm
 isMRKT_GL = False #flag for buing by Market
 isLMT_GL = True #flag for buing by LIMIT
 nLMT_GL = 0 # +/- limit cost for Buy in base crypto
+nLMT_GL_CheckB = 0 #Check box for Auto or Select option!
+BigUpDn_CheckB = 0 #Check box for Auto or Select option BigUp or BigDn
 nLMT_MrgGL = 0 # +/- limit cost for Sell in base crypto
 nLMTauto_GL = 0 # +/- limit in base crypto
 nLMTautoDnLng_GL = 0
@@ -182,14 +184,14 @@ macdH_prev = 0 #previous value for MACD Histogram
 maFast_prev = 0
 maSlow_prev = 0
 # Подключаем логирование
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)-5.5s] %(message)s",
-    level=logging.DEBUG,
-    handlers=[
-        logging.FileHandler("{path}/logs/{fname}.log".format(path=os.path.dirname(os.path.abspath(__file__)), fname="binance")),
-        logging.StreamHandler()
-    ])
-log = logging.getLogger('')
+# logging.basicConfig(
+#     format="%(asctime)s [%(levelname)-5.5s] %(message)s",
+#     level=logging.DEBUG,
+#     handlers=[
+#         logging.FileHandler("{path}/logs/{fname}.log".format(path=os.path.dirname(os.path.abspath(__file__)), fname="binance")),
+#         logging.StreamHandler()
+#     ])
+# log = logging.getLogger('')
 
 ORDER_STATUS = ['NEW', 'PARTIALLY_FILLED', 'PARTIALLY_FILLED', 'FILLED', 'CANCELED', 'PENDING_CANCEL', 'REJECTED', 'EXPIRED']
 
