@@ -1,3 +1,2 @@
-apikey=''
-
-apisecret=''
+# apikey='8kRAAwbxNCl7IBUUOyeEin8f6KC8XbdSJaRD6ulR8Uy07SAnvss0tulYfm6Ghnpv'
+# apisecret='eQWj1N6pk1XaBw3CutnSY3oQZeoIG16E6twAWVPTjVMRqqZFyeZn5cLlvYqya8xS'
