@@ -214,7 +214,7 @@ class OOP:
         self.rbVarM_L = tk.IntVar()
         self.rbVarM_ST = tk.IntVar()
 
-        labelSep2 = ttk.Label(self.t1Frame11, text="++++++++++++++ MACD +++++++++++++++++++")
+        labelSep2 = ttk.Label(self.t1Frame11, text=" ++++++++++++++ MACD +++++++++++++++++++")
         labelSep2.grid(column=0, row=0)
         self.radMACD = tk.Radiobutton(self.t1Frame11, text="MACD Cross", variable=self.rbVarM_ST, value=0, width=12, command=self.radCall2)
         self.radMACD.grid(column=0, row=1, sticky='W')
