@@ -258,8 +258,12 @@ class OOP:
         # self.cmbSPDn.current(3)
         # self.cmbSPDn.grid(column=1, row=8, sticky='E')
 
-        labelLastBig = ttk.Label(self.t1Frame11, text="Last candle Big(in %): ")
-        labelLastBig.grid(column=0, row=9, sticky='W')
+        self.varCB2 = tk.IntVar()
+        self.cb2 = tk.Checkbutton(self.t1Frame11, text=" - Auto? Last candle Big(in %): ", variable=self.varCB2, onvalue=1, command=self.print_value)
+        self.cb2.select()
+        self.cb2.grid(column=0, row=9, sticky='W')
+        #labelLastBig = ttk.Label(self.t1Frame11, text="Last candle Big(in %): ")
+        #labelLastBig.grid(column=0, row=9, sticky='W')
         self.cmbBigDn = ttk.Combobox(self.t1Frame11, values=cnf.listPrntBigUpDn, width=6)
         self.cmbBigDn.current(0)
         self.cmbBigDn.grid(column=0, row=9, sticky='E')
@@ -267,8 +271,12 @@ class OOP:
         self.cmbBigUp.current(0)
         self.cmbBigUp.grid(column=1, row=9)
 
-        label3LastBig = ttk.Label(self.t1Frame11, text="Last N candles Big(in %): ")
-        label3LastBig.grid(column=0, row=10, sticky='W')
+        self.varCB3 = tk.IntVar()
+        self.cb3 = tk.Checkbutton(self.t1Frame11, text=" - Auto? Last N candles Big(in %): ", variable=self.varCB3, onvalue=1, command=self.print_value)
+        self.cb3.select()
+        self.cb3.grid(column=0, row=10, sticky='W')
+        #label3LastBig = ttk.Label(self.t1Frame11, text="Last N candles Big(in %): ")
+        #label3LastBig.grid(column=0, row=10, sticky='W')
         self.cmb3BigDn = ttk.Combobox(self.t1Frame11, values=cnf.listPrnt3LstBigUpDn, width=6)
         self.cmb3BigDn.current(1)
         self.cmb3BigDn.grid(column=0, row=10, sticky='E')
@@ -452,6 +460,7 @@ class OOP:
         cnf.nLMT_GL = float(self.cmb19.get())#limit cost for Buy
         cnf.nLMT_GL_CheckB = self.var.get() # get value of CheckBox 1-select, 0-deselect
         cnf.nLMT_MrgGL = float(self.cmbDMrg.get()) #limit cost for Sell
+        cnf.BigUpDn_CheckB = self.varCB2.get() # get value of CheckBox 1-select, 0-deselect
         cnf.KlineGL = self.cmb06.get() #time frame for long
         cnf.BUYlng_LIFE_TIME_MIN = int(str(cnf.KlineGL)[0]) #life time for buing (correct only until 5min)
         cnf.KlineMrgGL = self.cmbTfMrg.get() #time frame for Margin

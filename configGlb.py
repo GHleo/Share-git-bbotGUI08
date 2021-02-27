@@ -98,6 +98,7 @@ nLMT_MrgGL = 0 # +/- limit cost for Sell in base crypto
 nLMTauto_GL = 0 # +/- limit in base crypto
 nLMTautoDnLng_GL = 0
 nLMTautoUpMrg_GL = 0 # +/- limit in base crypto
+BigUpDn_CheckB = 0 #Check box for Auto or Select option BigUp or BigDn
 driveMode = 0 # 0 - Trade Emulation; 1 - Trade Real
 #countTrade = 0
 countPos = 0
