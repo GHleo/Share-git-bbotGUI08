@@ -36,7 +36,7 @@ def run_progressbar(_pb00, delay_):
 #ffffffffffffffffffffffffffff function for Cross MACD alg fffffffffffffffffff
 @thread
 def e_taTradeMACD(_1th_scrol,_2th_scrol, _3th_scrol, pb00_):
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     make_initial_tables_emTA(cursor)  # _taTrade
@@ -141,22 +141,26 @@ def e_taTradeMACD(_1th_scrol,_2th_scrol, _3th_scrol, pb00_):
 # !!!!!!!!!!!!!!!!!! BUY LIMIT with TIMER - MACD - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if Ups and cnf.isLMT_GL:  # if Short trend or started from HSTREmulate and Limit
                         pname, ordID, myamount, sellLMT, spendsum, profit, stoploss, currate, dtb = BUY('MACD')
-                        need_priceLMT = round(currate - cnf.nLMTautoDnLng_GL)  # buy low on 10 base crypto ????????? we need correcting sellLMT
+                        if cnf.nLMT_GL_CheckB == 0:
+                            need_priceLMT = round(currate - cnf.nLMT_GL, 2)
+                        else:
+                            need_priceLMT = round(currate - cnf.nLMTautoDnLng_GL,2)
+                        print('e_taTradeMACD()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB)+ '; currate: ' + str(currate) + '; need_priceLMT: ' + str(need_priceLMT))
                         while order_statusB:
                             curr_rate = round(float(cnf.bot.tickerPrice(symbol=pname)['price']),2)
                             time_passedM = round((int(time.time()) - dtb)/60,2)
                             _2th_scrol.delete(0.1, tk.END)
                             _2th_scrol.insert(0.1,'Buy.. MACD -LIMIT- Current rate -> ' + str(curr_rate) + '\nAim -> ' + str(need_priceLMT) + '\n..... time passed min. ' + str(time_passedM) + '\n')
                             if time_passedM > cnf.BUYlng_LIFE_TIME_MIN: # if time passed Exit from loop -order_statusB-
-                                _3th_scrol.insert(tk.END, 'MACD -LIMIT- Pair: ' + str(pname) + '; time_passed min-> ' + str(time_passedM)+ '; cnf.nLMTautoDnLng_GL: ' + str(cnf.nLMTautoDnLng_GL) + ' ****** EXIT ******'+ '\n\n')
+                                _3th_scrol.insert(tk.END, 'MACD -LIMIT- Pair: ' + str(pname) + '; time_passed min-> ' + str(time_passedM)+ '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_GL: ' + str(cnf.nLMT_GL) + '\n****** EXIT ******'+ '\n\n')
                                 cnf.eml_freezLong_GL = False
                                 isBuing = False
                                 break # terminate loop -order_statusB-
                             if curr_rate <= need_priceLMT:
                                 add_new_order_buy_emTA(cursor, conn, pname, ordID, myamount, need_priceLMT, spendsum, profit, sellLMT, stoploss) # -10-
-                                _3th_scrol.insert(tk.END,'MAKD -LIMIT- Pair: ' + str(pname) + '\nBuy.. Price-> ' + str(currate) + '; Amount: ' + str(myamount)+ '; cnf.nLMTautoDnLng_GL: ' + str(cnf.nLMTautoDnLng_GL) + '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
+                                _3th_scrol.insert(tk.END,'MAKD -LIMIT- Pair: ' + str(pname) + '\nBuy.. Price-> ' + str(currate) + '; Amount: ' + str(myamount)+ '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_GL: ' + str(cnf.nLMT_GL)+ '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
                                 isBuing = False
-                                print('!!!! e_taTradeMACD... currate: ' + str(currate) + '; cnf.nLMTautoDnLng_GL: ' + str(cnf.nLMTautoDnLng_GL))
+                                print('!!!! e_taTradeMACD... currate: ' + str(currate) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_GL: ' + str(cnf.nLMT_GL))
                                 break
                             time.sleep(5)  # 5sec
                     if not isBuing: break #Exit from loop isBuing
@@ -176,7 +180,7 @@ def e_taTradeMACD(_1th_scrol,_2th_scrol, _3th_scrol, pb00_):
 #ffffffffffffffffffffffffffff function for alg Short Trend fffffffffffffffffff
 @thread
 def e_taTradeShTrend(_1th_scrol,_2th_scrol, _3th_scrol, pb00_):
-    conn2 = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn2 = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn2.row_factory = sqlite3.Row
     cursorShTr = conn2.cursor()
     make_initial_emTA_ShTr(cursorShTr)  #
@@ -275,21 +279,26 @@ def e_taTradeShTrend(_1th_scrol,_2th_scrol, _3th_scrol, pb00_):
 # !!!!!!!!!!!!!!!!!! BUY LIMIT with TIMER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                      if (isDn or isBigDn) and cnf.isLMT_GL:  # if Short trend or started from HSTREmulate and Limit
                          pname, ordID, myamount, sellLMT, spendsum, profit, stoploss, currate, dtb = BUY('ShortTrend')
-                         need_priceLMT = round(currate - cnf.nLMTautoDnLng_GL,2) # buy low on 10 base crypto ????????? we need correcting sellLMT
+                         if cnf.nLMT_GL_CheckB == 0:
+                             need_priceLMT = round(currate - cnf.nLMT_GL, 2)
+                         else:
+                             need_priceLMT = round(currate - cnf.nLMTautoDnLng_GL,2) # buy low on 10 base crypto ????????? we need correcting sellLMT
+                         #print('e_taTradeShTrend()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; need_priceLMT: ' + str(need_priceLMT))
+                         print('e_taTradeMACD()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; currate: ' + str(currate) + '; need_priceLMT: ' + str(need_priceLMT))
                          while order_statusB:
                              curr_rate = round(float(cnf.bot.tickerPrice(symbol=cnf.symbolPairGL)['price']),2)
                              time_passedM = round(int(time.time() - dtb)/60,2)
                              _2th_scrol.delete(0.1, tk.END)
                              _2th_scrol.insert(tk.END, 'buy ShortTrend -LIMIT- Cur rate-> ' + str(curr_rate ) + '; Aim-> ' + str(need_priceLMT) + '\n..... time passed min. ' + str(time_passedM) + '\n')
                              if time_passedM > cnf.BUYlng_LIFE_TIME_MIN:
-                                 _3th_scrol.insert(tk.END, 'Buy... ShortTrend -LIMIT- Pair: ' + str(pname) + '; time_passed min-> '+ str(time_passedM)+ '; cnf.nLMTautoDnLng_GL: ' + str(cnf.nLMTautoDnLng_GL)+ '; ' + ' ****** EXIT ******' + '\n')
+                                 _3th_scrol.insert(tk.END, 'Buy... ShortTrend -LIMIT- Pair: ' + str(pname) + '; time_passed min-> '+ str(time_passedM)+ '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_GL: ' + str(cnf.nLMT_GL) + '\n****** EXIT ******' + '\n')
                                  cnf.eml_freezLong_GL = False  # Exit from function
                                  isBuing = False
                                  break # terminate loop -order_statusB-
                              if curr_rate <= need_priceLMT: # if limit
                                 add_new_order_buy_emTA_ShTr(cursorShTr, conn2, pname, ordID, myamount, need_priceLMT, spendsum, profit,stoploss, sellLMT)
-                                _3th_scrol.insert(tk.END, 'Buy... ShortTrend -LIMIT- Pair: ' + str(pname) + '\nPrice: ' + str(currate) + '; Amount: ' + str(myamount) + '; cnf.nLMTautoDnLng_GL: ' + str(cnf.nLMTautoDnLng_GL)+ '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
-                                print('!!!! e_taTradeShTrend()... currate: ' + str(currate) + '; cnf.nLMTautoDnLng_GL: ' + str(cnf.nLMTautoDnLng_GL))
+                                _3th_scrol.insert(tk.END, 'Buy... ShortTrend -LIMIT- Pair: ' + str(pname) + '\nPrice: ' + str(currate) + '; Amount: ' + str(myamount) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_GL: ' + str(cnf.nLMT_GL)+ '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
+                                print('!!!! e_taTradeShTrend()... currate: ' + str(currate)+ '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_GL: ' + str(cnf.nLMT_GL))
                                 isBuing = False
                                 break #Exit from loop isBuing
                              time.sleep(5) #5sec
@@ -382,7 +391,7 @@ def SELL(orders_info,s_algorithm):
 
 def getInfo(a1th_scrol,a2th_scrol,a3th_scrol):
     md = MarketData.MarketData()
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -478,10 +487,9 @@ def getInfo(a1th_scrol,a2th_scrol,a3th_scrol):
 
     return rcmUpMrg, rcmDnLng, Last10LngAvr, Last10MrgAvr, CalcProfit
 
-
 def e_select4Tables(hours,countTrades,prntLimit):
     # hours - time frame for select; countTrades -  how many positive trades in sequence
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 

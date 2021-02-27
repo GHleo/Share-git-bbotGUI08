@@ -29,7 +29,7 @@ def run_progressbar(_pb00, delay_):
 
 @thread
 def mrgTradeMACD(m1th_scrol, m4th_scrol,m5th_scrol,pb00_):
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     db.make_initial_table_MRG(cursor)  # _taTrade
@@ -248,7 +248,12 @@ def mrgTradeMACD(m1th_scrol, m4th_scrol,m5th_scrol,pb00_):
                             break  # terminate loop -isSelling-
 # !!!!!!!!!!!!!!!!!!!!!! SELL LIMIT with TIMER  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (Dns and cnf.isLMT_GL) or (sell_order and cnf.isLMT_GL):  # if Short trend or started from HSTREmulate and Limit
-                        need_priceLMT = round(price + cnf.nLMTautoUpMrg_GL,2)  # 5$ buy low on base crypto ????????? we need correcting sellLMT
+                        #need_priceLMT = round(price + cnf.nLMTautoUpMrg_GL,2)  # 5$ buy low on base crypto ????????? we need correcting sellLMT
+                        if cnf.nLMT_GL_CheckB == 0:
+                            need_priceLMT = round(price - cnf.nLMT_MrgGL, 2)
+                        else:
+                            need_priceLMT = round(price + cnf.nLMTautoUpMrg_GL,2)
+                        print('mrgTradeMACD()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL))
                         if not sell_order:  # create first buy order
                             new_order = newOrderM(pair_name_=pname, got_qty_=amount, CURR_LIMITS_=CURR_LIMITS, need_cost_=need_priceLMT, side_='SELL', type_='LIMIT', mode='short')
                             db.add_new_order_SELL_MRG(cursor, conn, pname, new_order['orderId'], amount, price,spendsumMRG, profit, stoploss, 'market')  # -10-
@@ -328,10 +333,10 @@ def mrgTradeMACD(m1th_scrol, m4th_scrol,m5th_scrol,pb00_):
     cursor.close()
 @thread
 def mrgTradeShTr(m1th_scrol, m4th_scrol,m5th_scrol,pb00_):
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    db.make_initial_table_MRG_ShTr(cursor)  #
+    db.make_initial_table_MRG_ShTr(cursor)
     m4th_scrol.delete(0.1, tk.END)
     m5th_scrol.delete(0.1, tk.END)
     m5th_scrol.insert(tk.END,'mrgTradeShTr -> START!!!'+ '\n')
@@ -543,7 +548,12 @@ def mrgTradeShTr(m1th_scrol, m4th_scrol,m5th_scrol,pb00_):
 
 # !!!!!!!!!!!!!!!!!!!!!! SELL LIMIT with TIMER if fast Grow last candel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if ((isUp or isBigUp) and cnf.isLMT_GL) or (sell_order and cnf.isLMT_GL):  # if Short trend or started from HSTREmulate and Limit
-                        need_priceLMT = round(price + cnf.nLMTautoUpMrg_GL, 2)  # 5$ buy low on base crypto ????????? we need correcting sellLMT
+                        #need_priceLMT = round(price + cnf.nLMTautoUpMrg_GL, 2)  # 5$ buy low on base crypto ????????? we need correcting sellLMT
+                        if cnf.nLMT_GL_CheckB == 0:
+                            need_priceLMT = round(price - cnf.nLMT_MrgGL, 2)
+                        else:
+                            need_priceLMT = round(price + cnf.nLMTautoUpMrg_GL, 2)
+                        print('mrgTradeShTr()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL))
                         if not sell_order:  # create first buy order
                             print('Sell(Mrg)...ShortTrend -LIMIT- Price-> ' + str(price) + '; need_priceLMT: ' + str(need_priceLMT)+ '; cnf.nLMTautoUpMrg_GL: ' + str(cnf.nLMTautoUpMrg_GL))
                             #pname, amount, spendsumMRG, profit, stoploss, CURR_LIMITS, sdt = SELL(price)  # -8-

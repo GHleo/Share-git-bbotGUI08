@@ -31,7 +31,7 @@ def run_progressbar(_pb00, delay_):
 @thread
 def emrg_taTradeMACD(e1th_scrol,e4th_scrol,e5th_scrol,pb00_):
     # Устанавливаем соединение с локальной базой данных
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     db.make_initial_table_emMRG(cursor)  # _taTrade
@@ -132,23 +132,27 @@ def emrg_taTradeMACD(e1th_scrol,e4th_scrol,e5th_scrol,pb00_):
 # !!!!!!!!!!!!!!!!!!!!!! SELL LIMIT with TIMER - MACD - if signal line crossed !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if Dns and cnf.isLMT_GL:  # if Short trend or started from HSTREmulate and Limit
                         spname, sorderID, smyamount, sspendsum, sprofitmarkup, sstoploss, scurrate, sdts = SELL('MACD')  # -8-
-                        need_priceLMT = round(scurrate + cnf.nLMTautoUpMrg_GL,2) # cost for limit order
+                        if cnf.nLMT_GL_CheckB == 0:
+                            need_priceLMT = round(scurrate + cnf.nLMT_MrgGL,2)
+                        else:
+                            need_priceLMT = round(scurrate + cnf.nLMTautoUpMrg_GL, 2)
+                        print('e_taTradeMACD()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; scurrate: ' + str(scurrate) + '; need_priceLMT: ' + str(need_priceLMT))
                         while order_statusS:
                             curr_rate = float(cnf.bot.tickerPrice(symbol=cnf.symbolPairGL)['price'])
                             time_passedM = round((int(time.time()) - sdts)/60,2)
                             e4th_scrol.delete(0.1, tk.END)
                             e4th_scrol.insert(tk.END, 'Sell... MACD -LIMIT- Current rate -> ' + str(curr_rate)+ '\nAim -> ' + str(need_priceLMT) + '\n..... time passed min. ' + str(time_passedM) + '\n')
                             if time_passedM > cnf.SELLshrt_LIFE_TIME_MIN:  # if time passed Exit from loop -order_statusB-
-                                e5th_scrol.insert(tk.END, 'Sell... MACD -LIMIT-  Pair: ' + str(spname) + '; time_passed min-> ' + str(time_passedM) + '; cnf.nLMTautoUpMrg_GL: ' + str(cnf.nLMTautoUpMrg_GL)+ ' ****** EXIT ******' + '\n\n')
+                                e5th_scrol.insert(tk.END, 'Sell... MACD -LIMIT-  Pair: ' + str(spname) + '; time_passed min-> ' + str(time_passedM) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL)+ '\n****** EXIT ******' + '\n\n')
                                 isSelling = False
                                 cnf.eml_freezShort_GL = False
-                                print('!!!! emrg_taTradeMACD... currate: ' + str(curr_rate) + '; cnf.nLMTautoUpMrg_GLL: ' + str(cnf.nLMTautoUpMrg_GL))
+                                print('!!!! emrg_taTradeMACD... currate: ' + str(curr_rate)+ '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL))
                                 break  # terminate loop -order_statusB-
                             if curr_rate >= need_priceLMT:
                                 db.add_new_order_SELL_emMRG(cursor, conn, spname, sorderID, smyamount, curr_rate, sspendsum, sprofitmarkup, sstoploss,'limit') # -9-
-                                e5th_scrol.insert(tk.END, 'Sell... MACD MRG -LIMIT- Pair: ' + str(spname) + '\nPrice: ' + str(need_priceLMT) + '; Amount: ' + str(smyamount) + '; cnf.nLMTautoUpMrg_GL: ' + str(cnf.nLMTautoUpMrg_GL) + '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
+                                e5th_scrol.insert(tk.END, 'Sell... MACD MRG -LIMIT- Pair: ' + str(spname) + '\nPrice: ' + str(need_priceLMT) + '; Amount: ' + str(smyamount)+ '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL)+ '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
                                 isSelling = False
-                                print('!!!! emrg_taTradeMACD... currate: ' + str(curr_rate) + '; cnf.nLMTautoUpMrg_GL: ' + str(cnf.nLMTautoUpMrg_GL))
+                                print('!!!! emrg_taTradeMACD... currate: ' + str(curr_rate) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL))
                                 break
                     if not isSelling: break  # Exit from loop isSelling
                     thread = threading.Thread(target=run_progressbar(pb00_, cnf.chVarDelay_GL))
@@ -166,10 +170,10 @@ def emrg_taTradeMACD(e1th_scrol,e4th_scrol,e5th_scrol,pb00_):
     cursor.close()
 @thread
 def emrg_taTradeShTr(e1th_scrol,e4th_scrol,e5th_scrol,pb00_):
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    db.make_initial_table_emMRG_ShTr(cursor)  #
+    db.make_initial_table_emMRG_ShTr(cursor)
     print('emrg_taTradeShTr START !!!!!!!!!!!!!!!!! ')
     global isBuing
     global isSelling
@@ -271,21 +275,25 @@ def emrg_taTradeShTr(e1th_scrol,e4th_scrol,e5th_scrol,pb00_):
                         spname, sorderID, smyamount, sspendsum, sprofitmarkup, sstoploss, scurrate, sdts = SELL('ShortTrend')  # -8-
                         while order_statusS:
                             curr_rate = round(float(cnf.bot.tickerPrice(symbol=cnf.symbolPairGL)['price']),2)
-                            need_priceLMT = round(scurrate + cnf.nLMTautoUpMrg_GL,2)
+                            if cnf.nLMT_GL_CheckB == 0:
+                                need_priceLMT = round(scurrate + cnf.nLMT_MrgGL,2)
+                            else:
+                                need_priceLMT = round(scurrate + cnf.nLMTautoUpMrg_GL,2)
+                            print('e_taTradeMACD()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; scurrate: ' + str(scurrate) + '; need_priceLMT: ' + str(need_priceLMT))
                             time_passedM = round((int(time.time()) - sdts) / 60, 2)
                             e4th_scrol.delete(0.1, tk.END)
                             e4th_scrol.insert(tk.END, 'Sell... Short Trend -LIMIT- Current rate -> ' + str(curr_rate) + '\nAim -> ' + str(need_priceLMT) + '\n..... time passed min. ' + str(time_passedM) + '\n')
                             if time_passedM > cnf.SELLshrt_LIFE_TIME_MIN:
-                                e5th_scrol.insert(tk.END, 'Short Trend MRG -LIMIT- Pair: ' + str(spname) + '; time_passed min-> ' + str(time_passedM)+ '; cnf.nLMTautoUpMrg_GL: ' + str(cnf.nLMTautoUpMrg_GL) + ' ****** EXIT ******' + '\n\n')
+                                e5th_scrol.insert(tk.END, 'Short Trend MRG -LIMIT- Pair: ' + str(spname) + '; time_passed min-> ' + str(time_passedM)+ '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL) + '\n****** EXIT ******' + '\n\n')
                                 isSelling = False
                                 cnf.eml_freezShort_GL = False
-                                print('!!!! emrg_taTradeShTr... currate: ' + str(curr_rate) + '; cnf.nLMTautoUpMrg_GL:' + str(cnf.nLMTautoUpMrg_GL))
+                                print('!!!! emrg_taTradeShTr... currate: ' + str(curr_rate) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL))
                                 break  # terminate loop -order_statusB-
                             if curr_rate >= need_priceLMT:
                                 db.add_new_order_SELL_emMRG_ShTr(cursor, conn, spname, sorderID, smyamount, curr_rate, sspendsum, sprofitmarkup, sstoploss,'limit')  # -9-
-                                e5th_scrol.insert(tk.END, 'Short Trend MRG -LIMIT- Pair: ' + str(spname) + '\nSell.. Price: ' + str(need_priceLMT) + '; Amount: ' + str(smyamount) + '; cnf.nLMTautoUpMrg_GL: ' + str(cnf.nLMTautoUpMrg_GL)+ '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
+                                e5th_scrol.insert(tk.END, 'Short Trend MRG -LIMIT- Pair: ' + str(spname) + '\nSell.. Price: ' + str(need_priceLMT) + '; Amount: ' + str(smyamount) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL)+ '; ' + str(dt.now().strftime('%H:%M:%S')) + '\n')
                                 isSelling = False
-                                print('!!!! emrg_taTradeShTr... currate: ' + str(curr_rate) + '; cnf.nLMTautoUpMrg_GL: ' + str(cnf.nLMTautoUpMrg_GL))
+                                print('!!!! emrg_taTradeShTr... currate: ' + str(curr_rate) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoUpMrg_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_MrgGL))
                                 break
                     if not isSelling: break  # Exit from loop isSelling
 

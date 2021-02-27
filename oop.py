@@ -18,11 +18,10 @@ import HSTREmulate
 
 # ===================================================================
 class OOP:
-
     gbalance = {balance['asset']: float(balance['free']) for balance in cnf.bot.account()['balances'] if balance['asset'] == 'USDT'}
     mbalanceUSDT = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'USDT'}
     mbalancesBTC = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'BTC'}
-    mbalancesTRX = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'TRX'}
+    #mbalancesTRX = {info['asset']: float(info['free']) for info in cnf.bot.marginAccount()['userAssets'] if info['asset'] == 'TRX'}
     curr_rate = round(float(cnf.bot.tickerPrice(symbol='BTCUSDT')['price']),2)
 
     def __init__(self):  # Initializer method!
@@ -54,6 +53,7 @@ class OOP:
 
         #t1Frame1St = ttk.Style()
         #t1Frame1St.configure('Red.TLabelframe.Label', background='blue')
+
         self.t1Frame1 = tk.LabelFrame(self.tab0, bg="white", text=' ------------ General settings ---------------------------------  ')# style = "Font.TLabelframe")
         self.t1Frame1.grid(column=0, row=0, padx=4, pady=4, sticky='N')
         self.t1Frame11 = tk.LabelFrame(self.tab0, bg="white", text=' ----------- Short Trend and MACD Algorithms ---------------------------  ')
@@ -120,10 +120,10 @@ class OOP:
         self.entry14_mess.set(str(round(self.curr_rate * self.mbalancesBTC['BTC'],3)) + ' in USDT')
         self.entry14.grid(column=1,row=5)
 
-        self.entry15_mess = tk.StringVar()
-        self.entry15 = tk.Entry(self.t1Frame1, textvariable=self.entry15_mess, width=12)
-        self.entry15_mess.set(str(round(self.curr_rate * self.mbalancesTRX['TRX'],3)) + ' in TRX')
-        self.entry15.grid(column=1,row=19)
+        # self.entry15_mess = tk.StringVar()
+        # self.entry15 = tk.Entry(self.t1Frame1, textvariable=self.entry15_mess, width=12)
+        # self.entry15_mess.set(str(round(self.curr_rate * self.mbalancesTRX['TRX'],3)) + ' in TRX')
+        # self.entry15.grid(column=1,row=19)
 
         labelSep1 = ttk.Label(self.t1Frame1, text="+++++++++++++++++++++++++++++++++")
         labelSep1.grid(column=0, row=6)
@@ -182,9 +182,15 @@ class OOP:
         self.cmbTfMrg = ttk.Combobox(self.t1Frame1, values=cnf.mKline, width=4)
         self.cmbTfMrg.current(1)
         self.cmbTfMrg.grid(column=1, row=14)
+#####################################################################################################3
+        #label10 = ttk.Label(self.t1Frame1, text="Delta for Limits($)")
+        #label10.grid(column=0, row=15)
 
-        label10 = ttk.Label(self.t1Frame1, text="Delta for Limits($)")
-        label10.grid(column=0, row=15)
+        self.var = tk.IntVar()
+        self.cb = tk.Checkbutton(self.t1Frame1, text=" - Auto? Delta for Limits($) ", variable=self.var, onvalue=1, command=self.print_value)
+        self.cb.select()
+        self.cb.grid(column=0, row=15)
+
         self.cmb19 = ttk.Combobox(self.t1Frame1, values=cnf.limitUSD, width=4)
         self.cmb19.current(4)
         self.cmb19.grid(column=0, row=15, sticky='E')
@@ -201,6 +207,9 @@ class OOP:
 
         self.radSetReal = tk.Radiobutton(self.t1Frame1, text="Trade Real        ", variable=self.rbVarMode, value=1, width=14, command=self.radCallMode)
         self.radSetReal.grid(column=0, row=18, sticky='W')
+
+        btn53 = ttk.Button(self.t1Frame4, text="First Create DB!", command=lambda: self.db_init())
+        btn53.grid(column=0, row=19, pady=10)
 
         self.rbVarM_L = tk.IntVar()
         self.rbVarM_ST = tk.IntVar()
@@ -414,6 +423,8 @@ class OOP:
     #     def execute(*args, **kwargs):
     #         threading.Thread(target=fn, args=args, kwargs=kwargs).start()
     #     return execute
+    def db_init(self):
+        AppWork.firstInitDB()
 
     def click_init(self,_pairs):
         self.t1Frame1.update()
@@ -439,6 +450,7 @@ class OOP:
         #print('_pairs: ',_pairs)
         cnf.pairsGL = _pairs
         cnf.nLMT_GL = float(self.cmb19.get())#limit cost for Buy
+        cnf.nLMT_GL_CheckB = self.var.get() # get value of CheckBox 1-select, 0-deselect
         cnf.nLMT_MrgGL = float(self.cmbDMrg.get()) #limit cost for Sell
         cnf.KlineGL = self.cmb06.get() #time frame for long
         cnf.BUYlng_LIFE_TIME_MIN = int(str(cnf.KlineGL)[0]) #life time for buing (correct only until 5min)
@@ -664,4 +676,8 @@ class OOP:
             #print('if select Trade Real', cnf.driveMode )
 
 
+
+
+    def print_value(self):
+        print(cnf.nLMT_GL_CheckB)
 #OOP().win.mainloop()

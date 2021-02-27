@@ -15,17 +15,6 @@ from tkinter import messagebox as msg
 import queriesToDB as db
 from misc import adjust_to_step, macdSignalCross, newOrderM
 
-# Устанавливаем соединение с локальной базой данных
-#conn = sqlite3.connect('binance_app08.db')#, check_same_thread=False)
-#conn.row_factory = sqlite3.Row
-#cursor = conn.cursor()
-
-# conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
-# conn.row_factory = sqlite3.Row
-# cursor = conn.cursor()
-
-#db.make_initial_tables_appTA(cursor) #table for MACD alg
-#db.make_initial_tables_appTA_ShTr(cursor) #table for Short Trend alg
 
 client = Client(keys.apikey, keys.apisecret)
 limits = cnf.bot.exchangeInfo()  # Получаем лимиты пары с биржи
@@ -45,7 +34,7 @@ def run_progressbar(_pb00, delay_):
 
 @thread
 def taTradeMACD(w1th_scrol,w2th_scrol,w3th_scrol, pb00_):
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     db.make_initial_tables_appTA(cursor)  # table for MACD alg
@@ -263,7 +252,12 @@ def taTradeMACD(w1th_scrol,w2th_scrol,w3th_scrol, pb00_):
 
 # !!!!!!!!!!!!!!!!!!!!!! BUY LIMIT with TIMER if fast fall last candel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (Ups and cnf.isLMT_GL) or (buy_order and cnf.isLMT_GL):  # if Short trend or started from HSTREmulate and Limit
-                        need_priceLMT = round(cprice - cnf.nLMTautoDnLng_GL,2)  # 5$ buy low on base crypto ????????? we need correcting sellLMT
+                        #need_priceLMT = round(cprice - cnf.nLMTautoDnLng_GL,2)  # 5$ buy low on base crypto ????????? we need correcting sellLMT
+                        if cnf.nLMT_GL_CheckB == 0:
+                            need_priceLMT = round(cprice - cnf.nLMT_GL, 2)
+                        else:
+                            need_priceLMT = round(cprice - cnf.nLMTautoDnLng_GL,2)
+                        print('taTradeMACD()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_GL))
                         if not buy_order:  # if is not order buy yet    
                             new_order = newOrderM(pair_name_=bpname, got_qty_=bmyamount, CURR_LIMITS_=CURR_LIMITS, need_cost_=need_priceLMT, side_='BUY', type_='LIMIT', mode='trade')
                             db.add_new_order_buy_appTA(cursor, conn, bpname, new_order['orderId'], bmyamount,need_priceLMT, bprofitmarkup, bstoploss, bsellLMT,'limit')  # -10-
@@ -348,7 +342,7 @@ def taTradeMACD(w1th_scrol,w2th_scrol,w3th_scrol, pb00_):
     cursor.close()
 @thread
 def taTradeShTrend(w1th_scrol,w2th_scrol,w3th_scrol, pb00_):
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     db.make_initial_tables_appTA_ShTr(cursor)  # table for Short Trend alg
@@ -565,7 +559,12 @@ def taTradeShTrend(w1th_scrol,w2th_scrol,w3th_scrol, pb00_):
 
 # !!!!!!!!!!!!!!!!!!!!!! BUY LIMIT with TIMER if fast fall last candel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if ((isDn or isBigDn) and cnf.isLMT_GL) or (buy_order and cnf.isLMT_GL):  # if Short trend or started from HSTREmulate and Limit
-                        need_priceLMT = round(cprice - cnf.nLMTautoDnLng_GL,2)
+                        #need_priceLMT = round(cprice - cnf.nLMTautoDnLng_GL,2)
+                        if cnf.nLMT_GL_CheckB == 0:
+                            need_priceLMT = round(cprice - cnf.nLMT_GL, 2)
+                        else:
+                            need_priceLMT = round(cprice - cnf.nLMTautoDnLng_GL,2)
+                        print('taTradeShTrend()... cnf.nLMT_GL_CheckB: ' + str(cnf.nLMT_GL_CheckB) + '; cnf.nLMT_auto: ' + str(cnf.nLMTautoDnLng_GL) + '; cnf.nLMT_MrgGL: ' + str(cnf.nLMT_GL))
                         if not buy_order:  # if is not order buy yet
                             new_order = newOrderM(pair_name_=bpname, got_qty_=bmyamount, CURR_LIMITS_=CURR_LIMITS, need_cost_=need_priceLMT, side_='BUY', type_='LIMIT', mode='trade')
                             db.add_new_order_buy_appTA_ShTr(cursor, conn, bpname, new_order['orderId'], bmyamount, need_priceLMT, bprofitmarkup, bstoploss, bsellLMT,'limit')  # -10- ??????????
@@ -777,7 +776,7 @@ def portfolio(portf_1th_scrol3_p31_1):
 
 # Pressed button Select profit real
 def portfolioProf(prof_2th_scrol3_p31_1, flag_):
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     sum_pv,sum_pp = 0,0
@@ -836,7 +835,7 @@ def portfolioProf(prof_2th_scrol3_p31_1, flag_):
     cursor.close()
 
 def updatePortfolio():
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     free_ = 0
@@ -867,7 +866,7 @@ def updatePortfolio():
 
 def select4Tables(hours,countTrades):
     # hours - time frame for select; countTrades -  how many positive trades in sequence
-    conn = sqlite3.connect('binance_app08.db', check_same_thread=False)
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -935,5 +934,19 @@ def select4Tables(hours,countTrades):
     cursor.close()
 
     return isTradesPos
+
+def firstInitDB():
+    conn = sqlite3.connect('binance_app088.db', check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    db.make_initial_tables_appTA(cursor)  # table for MACD alg
+    db.make_initial_tables_appTA_ShTr(cursor)  # table for Short Trend alg
+    db.make_initial_table_MRG(cursor)  # _taTrade
+    db.make_initial_table_MRG_ShTr(cursor)
+    db.make_initial_tables_emTA(cursor) # Emulation table for MACD alg
+    db.make_initial_emTA_ShTr(cursor) # Emulation table forShort Trendalg
+    db.make_initial_table_emMRG(cursor)
+    db.make_initial_table_emMRG_ShTr(cursor)
+    cursor.close()
 
 

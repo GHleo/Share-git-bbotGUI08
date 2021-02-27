@@ -93,6 +93,7 @@ isSTrend_GL = True #Flag for fast Trend algorithm
 isMRKT_GL = False #flag for buing by Market
 isLMT_GL = True #flag for buing by LIMIT
 nLMT_GL = 0 # +/- limit cost for Buy in base crypto
+nLMT_GL_CheckB = 0 #Check box for Auto or Select option!
 nLMT_MrgGL = 0 # +/- limit cost for Sell in base crypto
 nLMTauto_GL = 0 # +/- limit in base crypto
 nLMTautoDnLng_GL = 0
